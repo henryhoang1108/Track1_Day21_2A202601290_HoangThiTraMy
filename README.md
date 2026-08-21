@@ -1,5 +1,15 @@
 # K3 Track 1 · Day 20–21 — AI Evaluation (eval-kit)
 
+- **Học viên**: Hoàng Thị Trà My (Mã HV: `2A202601290`)
+- **Lớp**: K3 Track 1 · Capstone Day 20–21
+- **Đóng góp cá nhân**: 
+  - Thiết kế ma trận User Input Grid (3 chiều, 26 scenarios) phủ 100% tài liệu khoá học & slide.
+  - Gán nhãn thủ công độc lập (`labels-my.csv`), đo tỉ lệ đồng thuận 3 người (**76%** agreement) và thống nhất nhãn vàng chung (`labels.csv`).
+  - Xây dựng Rubric v1, Routing Map 4 làn và hoàn thiện tích hợp provider Agnes AI (`apihub.agnes-ai.com`).
+- **Verdict tóm tắt**: **CHƯA SHIP (NEEDS ITERATION)** — Tutor vượt qua 100% các tiêu chí Blocker về Schema và Security, nhưng cần cải thiện khả năng đính chính giả định sai (`S04_1`) và làm sắc nét ranh giới sư phạm (không cho đáp án bài lab trực tiếp).
+
+---
+
 Repo làm bài capstone **AI Evaluation** của case **VLearn AI Tutor** — trợ giảng trả lời
 câu hỏi học viên, chỉ dựa trên tài liệu khóa học, output là JSON
 `{scope, answer, sources, followup_questions}`.

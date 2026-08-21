@@ -24,7 +24,12 @@ import tracing
 _tracer = tracing.init_tracer()
 
 # Bảng giá USD / 1M tokens (input, output) — theo platform constants.ts
-PRICING = {"deepseek-v4-flash": (0.44, 1.32), "gpt-4o-mini": (0.15, 0.60)}
+PRICING = {
+    "deepseek-v4-flash": (0.44, 1.32),
+    "gpt-4o-mini": (0.15, 0.60),
+    "agnes-2.0-flash": (0.15, 0.60),
+    "gpt-oss-120b": (0.20, 0.80),
+}
 
 def estimate_cost_usd(model, usage):
     """Ước tính chi phí 1 lượt chạy; model lạ (chưa có giá) thì trả None."""
