@@ -276,7 +276,22 @@ Agreement: 14/24 = 58% (Tăng +12% nhờ bổ sung Near-Miss Examples)
   2. **Strict Pedagogical Guardrail**: Bổ sung negative prompt "Không bao giờ cung cấp prompt/code hoàn chỉnh cho bài lab 1 & lab 2".
   3. **Tối ưu Retrieval**: Tăng BM25 top-k từ 3 lên 5 để nâng Groundedness Pass Rate từ 73.1% lên $\ge 90\%$.
 
+### Kịch bản Trình bày 2 Phút Trước Lớp & Phản Biện (Presentation Pitch & Defense)
+
+- **1. Verdict Chốt**: **HOLD / CHƯA SHIP (NEEDS ITERATION)**.
+- **2. Con số Quyết định Cốt lõi**:
+  - Groundedness Pass Rate hiện tại: **73.1%** (Chưa đạt ngưỡng Gate $\ge 90\%$).
+  - False Premise Handling Pass Rate: **50.0%** (Lỗi trôi theo câu hỏi sai ở `S04_1`).
+  - Human Agreement Baseline: **76%** | LLM Judge Alignment: **58%** (với 91.7% Recall cho câu Pass).
+- **3. Điều Bất Ngờ Nhất Từ Calibration**:
+  - Ban đầu nhóm tưởng LLM Judge sẽ "chấm dễ dãi". Nhưng ở Vòng 1, Judge lại cực kỳ do dự và phán `uncertain` tới 17/24 cases! Chỉ sau khi bổ sung **3 ví dụ Near-Miss** ("suýt đúng nhưng thực ra sai") ở Vòng 2, % Agreement mới nhảy từ **46% $\rightarrow$ 58%** và nhận diện đúng 91.7% câu Pass.
+- **4. Bộ Khung Trả Lời Phản Biện Coach**:
+  - *Nếu Coach hỏi về Dimension*: Đã thiết kế 3 trục (Intent: Concept/Compare/DirectAnswer × Corpus Coverage: Single/Multi/Out-of-corpus × Clarity/Noise: Clear/Ambiguous/FalsePremise).
+  - *Nếu Coach hỏi về Label bất đồng*: 6 case bất đồng (`S03_1`, `S04_1`, `S05_1`, `S05_2`, `S13_1`, `S13_2`) đã được cả nhóm mang ra hội chuẩn và chốt Nhãn vàng chung dựa trên ranh giới hướng dẫn bài lab vs làm hộ.
+  - *Nếu Coach hỏi về Threshold*: Đã chốt TRƯỚC khi xem kết quả (Blocker Schema 100%, Security 100%, Citation doc_id 100%, Groundedness $\ge 90\%$).
+
 ### Câu hỏi tự soi
 - **Tin cậy nhất ở đâu, đáng lo nhất ở đâu?**: Tin cậy nhất ở khả năng bảo mật thông tin hạ tầng (`S08_1`, `S09_1` pass 100%); đáng lo nhất ở câu hỏi chứa giả định sai (`S04_1`).
 - **Nếu chỉ được fix MỘT thứ trước khi ship**: Fix `SYSTEM_PROMPT` để Tutor luôn đính chính giả định sai trước khi trả lời.
 - **Eval Loop sẽ chạy lại khi nào**: Mỗi lần cập nhật `SYSTEM_PROMPT` hoặc bổ sung corpus mới.
+- **Điều mang về áp dụng vào sản phẩm thật**: Nguyên tắc "Code check rẻ và chắc hơn LLM Judge" & "Luôn đặt Thresholds trước khi xem số liệu evaluation".
