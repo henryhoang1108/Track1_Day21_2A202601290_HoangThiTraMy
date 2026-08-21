@@ -8,3 +8,5 @@ verdicts.jsonl
 labels.csv
 labels-*.csv
 report.html
+.venv/
+.pytest_cache/
