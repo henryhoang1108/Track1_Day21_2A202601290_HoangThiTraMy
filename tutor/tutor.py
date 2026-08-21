@@ -81,6 +81,8 @@ PROVIDERS = {
     "anthropic":  ("ANTHROPIC_API_KEY", "https://api.anthropic.com/v1"),
     "gemini":     ("GEMINI_API_KEY", "https://generativelanguage.googleapis.com/v1beta/openai"),
     "openrouter": ("OPENROUTER_API_KEY", "https://openrouter.ai/api/v1"),
+    "groq":       ("GROQ_API_KEY", "https://api.groq.com/openai/v1"),
+    "agnes":      ("AGNES_API_KEY", os.environ.get("AGNES_BASE_URL", "https://apihub.agnes-ai.com/v1")),
 }
 
 BASE_URL = os.environ.get("EVAL_BASE_URL")  # None = gọi thẳng provider
@@ -91,6 +93,8 @@ def resolve_provider(model):
     if BASE_URL:
         key = os.environ.get("EVAL_API_KEY") or get_api_key(model)
         return BASE_URL, key, model
+    if model.startswith("agnes-"):
+        return PROVIDERS["agnes"][1], os.environ.get("AGNES_API_KEY"), model
     family = model.split("/")[0] if "/" in model else "openai"
     if family not in PROVIDERS:
         raise RuntimeError(
@@ -102,6 +106,10 @@ def resolve_provider(model):
 
 def get_api_key(model=MODEL):
     """Key theo family của model (openai/gpt-... -> OPENAI_API_KEY...)."""
+    if BASE_URL and os.environ.get("EVAL_API_KEY"):
+        return os.environ.get("EVAL_API_KEY")
+    if model.startswith("agnes-") or model.startswith("agnes/"):
+        return os.environ.get("AGNES_API_KEY")
     family = model.split("/")[0] if "/" in model else "openai"
     env_name = PROVIDERS.get(family, (f"{family.upper()}_API_KEY", None))[0]
     return os.environ.get(env_name) or os.environ.get("OPENAI_API_KEY")
@@ -206,9 +214,12 @@ def chat(messages, model=None, temperature=0, max_tokens=800, tools=None):
         payload["tool_choice"] = "auto"
     t0 = time.time()
     last_err = None
-    for attempt in range(3):  # gateway/provider thỉnh thoảng trả body JSON bị cắt ngang (200 nhưng không parse được) — retry
+    for attempt in range(5):  # retry nếu bị rate limit (429/503) hoặc body vỡ
         resp = requests.post(base_url + "/chat/completions", json=payload, timeout=120,
                              headers={"Authorization": "Bearer " + key})
+        if resp.status_code in (429, 503, 500, 502, 504):
+            time.sleep(3 * (attempt + 1))
+            continue
         resp.raise_for_status()
         try:
             return resp.json(), time.time() - t0

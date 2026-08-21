@@ -104,6 +104,9 @@ def init_tracer():
     try:
         return cls()
     except Exception as e:
-        print("[cảnh báo: khởi tạo %s lỗi (%s) — chạy không tracing]"
-              % (cls.backend, e))
+        try:
+            print("[canh bao: khoi tao %s loi (%s) — chay khong tracing]"
+                  % (cls.backend, e))
+        except Exception:
+            pass
         return _Noop()
